@@ -6,6 +6,7 @@ from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
 from matplotlib import style
 style.use("fivethirtyeight")
+from sklearn.utils import shuffle
 
 df1 = pd.read_csv('Student_Mat.txt')
 df2 = pd.read_csv('Student_Por.txt', sep=';')
@@ -45,24 +46,26 @@ def handle_non_numeric_data(df):
 df_mat = handle_non_numeric_data(df_mat)
 df_por = handle_non_numeric_data(df_por)
 
-df_mat_GP = df_mat[df["school"] == "GP"]
-df_mat_MS = df_mat[df["school"] == "MS"]
-df_por_GP = df_por[df["school"] == "GP"]
-df_por_MS = df_por[df["school"] == "MS"]
+# df_mat_GP = df_mat[df["school"] == "GP"]
+# df_mat_MS = df_mat[df["school"] == "MS"]
+# df_por_GP = df_por[df["school"] == "GP"]
+# df_por_MS = df_por[df["school"] == "MS"]
+#
+# mean_mat_GP = df_mat_GP["G3_Mat"].mean()
+# mean_mat_MS = df_mat_MS["G3_Mat"].mean()
+# mean_por_MS = df_por_MS["G3_Por"].mean()
+# mean_por_GP = df_por_GP["G3_Por"].mean()
+# print(mean_mat_GP)
+# plt.bar(["GP_mat", "MS_mat", "GP_por", "MS_por"], [mean_mat_GP, mean_mat_MS, mean_por_GP, mean_por_MS])
+# plt.show()
 
-mean_mat_GP = df_mat_GP["G3_Mat"].mean()
-mean_mat_MS = df_mat_MS["G3_Mat"].mean()
-mean_por_MS = df_por_MS["G3_Por"].mean()
-mean_por_GP = df_por_GP["G3_Por"].mean()
-print(mean_mat_GP)
-plt.bar(["GP_mat", "MS_mat", "GP_por", "MS_por"], [mean_mat_GP, mean_mat_MS, mean_por_GP, mean_por_MS])
-plt.show()
 
-X_mat = np.array(df_mat.drop(['G3_Mat'], 1))
-X_mat = preprocessing.scale(X_mat)
-y_mat = np.array(df_mat['G3_Mat'])
-accuracies_mat = []
 for i in range(25):
+    df_mat = shuffle(df_mat)
+    X_mat = np.array(df_mat.drop(['G3_Mat'], 1))
+    X_mat = preprocessing.scale(X_mat)
+    y_mat = np.array(df_mat['G3_Mat'])
+    accuracies_mat = []
     X_train, X_test, y_train, y_test = model_selection.train_test_split(X_mat,y_mat,test_size = 0.1)
 
     clf = LinearRegression(n_jobs=-1)
@@ -73,11 +76,13 @@ for i in range(25):
 
 print("Prediction accuracy of Math Scores in G3 for students is: " + str(mean(accuracies_mat)))
 
-X_por = np.array(df_por.drop(['G3_Por'], 1))
-X_por = preprocessing.scale(X_por)
-y_por = np.array(df_por['G3_Por'])
-accuracies_por = []
+
 for i in range(25):
+    df_por = shuffle(df_por)
+    X_por = np.array(df_por.drop(['G3_Por'], 1))
+    X_por = preprocessing.scale(X_por)
+    y_por = np.array(df_por['G3_Por'])
+    accuracies_por = []
     X_train, X_test, y_train, y_test = model_selection.train_test_split(X_por,y_por,test_size = 0.1)
 
     clf = LinearRegression(n_jobs=-1)
